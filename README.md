@@ -4444,3 +4444,11 @@ finally не останавливает поток выплнения, а про
 В макрозадачи входят timeOut'ы, EventListener'ы, Загрузка скриптов.
 Всегда выполняются макрозадачи только после всех микрозадач.
 
+
+Что почитать:
+1. https://refactoring.guru/ru/design-patterns/catalog
+
+ORM для js
+- prisma
+- typyorm
+- mongoose - для mongodb
