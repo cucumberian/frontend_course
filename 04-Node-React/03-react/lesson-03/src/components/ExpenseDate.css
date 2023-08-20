@@ -1,0 +1,8 @@
+.expense-item__date {
+    padding: 0.3rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    font-style: italic;
+    border: 1px dashed gray;
+    border-radius: 5px;
+}
