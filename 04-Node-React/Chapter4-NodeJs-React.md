@@ -5,8 +5,8 @@ h# Node
 ### Глоссарий
 
 `node.js` - программная платформа
-` package.json`` - файл конфигурации для проектов на nodeюоы
- `npm`` - node package manager
+`package.json`` - файл конфигурации для проектов на nodeюоы
+`npm`` - node package manager
 `модуль`` - фрагмент кода
 
 `repl`` - read evaluate print loop. Интератиный интерпретатор node.
@@ -562,20 +562,20 @@ function Fragment(props) {
 
 Если каким то еде=лементом перерываем, то семантически неверно, чтобы перекрывабщий жлемент лежал нутри перекрываемых элементов. И надо перекрывабщий жлемент выносить сверху в дом дереве.
 
-Порталы помогают преенести компоненты в любое место страницы
-index.html
+Порталы помогают перенести компоненты в любое место страницы
+`index.html`:
 
 ```html
 <div id="overlay-root"></div>
 ```
 
 ```jsx
-import ReactDOM from "react-dom";
+import createPortal from "react-dom";
 //...
 return (
   <>
-  {ReactDOM.createPortal(<div>...</div>, document.getElementById('overlay-root'))}
-  {ReactDOM.createPortal(<div>...</div>, document.getLementById('modal-root'))}
+  {createPortal(<div>...</div>, document.getElementById('overlay-root'))}
+  {createPortal(<div>...</div>, document.getLementById('modal-root'))}
   </div>
 );
 ```
@@ -594,7 +594,7 @@ console.log(nameInputRef.current);
 return (<imput name="username" ref={nameInputRef}>)
 ```
 
-Если мы напрфмую управляем html, то мы нивелируем плюсы реакта. Но иногда проще использовать ref.
+Если мы напрямую управляем html, то мы нивелируем плюсы реакта. Но иногда проще использовать ref.
 По правилам реакта управлять DOM деревом через ref плохо
 
 ## 06 `useEffect` `useContext`
@@ -1625,7 +1625,7 @@ export default store;
 
 ```jsx
 import store from "./store/index.js";
-import Provider from "react-redux";
+import { Provider } from "react-redux";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
@@ -1809,10 +1809,6 @@ const store = configureStore({
 });
 ```
 
-```jsx
-
-```
-
 ### 13. Продвинутый Redux
 
 ##### Плагин для хрома
@@ -1833,7 +1829,7 @@ https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfk
 
 ##### action creators
 
-Специальные акшены кторые возаращают функции.
+Специальные акшены кторые возвращают функции.
 
 ### 14. Async Redux. React Router.
 
@@ -1900,10 +1896,10 @@ export default Products;
 
 ##### CreateBrowserRouter
 
-Классдля роутов. Импортируется так:
+Класс для роутов. Импортируется так:
 
 ```jsx
-import { CreateBrowserRoute } from "react-browser-dom";
+import { createBrowserRoute } from "react-router-dom";
 ```
 
 Принимает на вход массив из обхектов, где каждый обхект - отвечает за страничку.
@@ -1917,7 +1913,7 @@ import Home from "./pages/Home";
 import { createBrowserRoute } from "react-router-dom";
 import { RouterProvider } from 'react-router-dom';
 
-const router = CreateBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
@@ -1935,7 +1931,7 @@ function App() {
 export default App;
 ```
 
-Также ипортируется `import { RouterProvider } from 'react-router-dom';`, в который оборачивается то, что мы возвращаем из компонента App.
+Также ипортируется `import { RouterProvider } from 'react-router-dom';`, в который оборачивается то, что мы возвращаем из компонента `App`.
 
 ##### Ссылки `<Link to='' relative='path'>`
 
@@ -2096,6 +2092,44 @@ const router = createBrowserRouter([
 ]);
 ```
 
+#### Автоматический редирект `useNavigate()` `<Navigate to='/'>`
+
+Чтобы реакт компонент перенаправил нас на другой адрес нужно использовать компонент `<Navigate to="uri" />` из `react-router-dom`.
+
+```jsx
+import React from "react";
+import { Link } from "react-router-dom";
+
+function LoginPage() {
+  return (
+    <>
+      <h1>Login Page</h1>
+      <p>
+        Войдите или <Link to="/register">Зарегистрируйтесь</Link>
+      </p>
+    </>
+  );
+}
+
+export default LoginPage;
+```
+
+Также можно использовать хук `useNavigate()` для редиректа. Работает он аналогичено компоненту `<Navigate to="/link"/>`:
+
+```jsx
+import { useNavigate } from "react-router-dom";
+
+function Page() {
+  const navigate = useNavigate();
+
+  if (true) {
+    navigate("/link");
+  }
+
+  return <h1>Page</h1>;
+}
+```
+
 ### 15 Динамические Роуты.
 
 #### Link -> NavLink
@@ -2130,7 +2164,9 @@ const router = createBrowserRouter([
 
 Для создания параметрического роута достаточно в пути написать двоеточие `:` и поставить нзвание параметра, в которое будет записываться часть пути. К этому параметру динамического роута можно иметь доступ из компонета, который вызывается.
 
-Для доступа к параметру роута используется хук `useParams` из `'react-router-dom'`:
+##### useParams
+
+Для доступа к параметру роута используется хук `useParams` из `'react-router-dom'`. Он предоставляет доступ ко всем динамическим параметрам, внутри элемента. Потмоки подительского пкти наследуют все родительские паарметры:
 
 ```jsx
 // ProductDetails.jsx
@@ -2144,7 +2180,35 @@ function ProductDetails() {
 }
 ```
 
-#### Link относительный
+Роутер:
+
+```jsx
+const router = createBrowserRouter({
+  path: "/prod/:a/:b/",
+  element: <Prod />,
+});
+```
+
+Компонент:
+
+```jsx
+// Prod.jsx
+//...
+import { useParams } from "react-router-dom";
+
+function Prod() {
+  const params = useParams();
+  return (
+    <main>
+      <h1> Произведение</h1>
+      <p>{`${params.a} * ${params.b} = ${params.a * params.b}`}</p>
+    </main>
+  );
+}
+export default Prod;
+```
+
+#### Link относительные и абсолютные пути.
 
 Относительно чего строится путь - относительно параметров вложенности в роуте или относительно пути в бравузере.
 
@@ -2158,7 +2222,7 @@ function ProductDetails() {
 
 ```jsx
 // relative='route' - значение по-умолчанию
-<Link to="../" relative="path"> 
+<Link to="../" relative="path">
 ```
 
 Например в приведённом примере переход осществится на 1 элемент выше по строке браузера, а не по жлементам в `route`.
@@ -2171,11 +2235,132 @@ function ProductDetails() {
 },
 ```
 
+Если в роуте указать `path=''`, то он будет считаться относительным путем. Относительно родительского элемента в который вложен этот элемент. Например если он вложен в
+
+```jsx
+{
+  path: '/',
+  element: <RootLayout>,
+  children: [s
+    {path: '', element: <Home /> },
+    {path: 'products', element: <Products />}
+  ]
+}
+```
+
+То у компонента `Home` будет абсолютный путь `/`, а у компонента `Products` `/products`.
+
+Точно также и в ссылках можно указывать абсолютные и относительные пути. Параметр `relative` у ссылок указывает на то, относительно чего будет расчитываться переход в ссылках:
+
+- `path` - относительно строки в браузере
+- `route` - относительно элемента route в реакте от которого строится маршрут.
+
 #### UUID package
 
 npmjs.com/package/uuid
 
+```bash
+npm install uuid
+```
+
+```jsx
+import { v4 as uuidv4 } from "uuid";
+const res = uuidv4(); // получаем uuid версии 4
+```
+
 ### 16 Authentication
+
+Для этого используем firebase. Создаем проект и после создания проекта регистрируем новое Web-приложение Web-App.
+Затем добавляем firebase SDK в наш React проект:
+
+```shell
+npm install firebase
+```
+
+В корне проекта создаём файл `./firebase.js` и помещаем в него код, который нам дает гугл:
+
+```jsx
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain: "XXXXXXXX.firebaseapp.com",
+  projectId: "XXXXXXXXX",
+  storageBucket: "XXXXXXXXXXX.appspot.com",
+  messagingSenderId: "XXXXXXX",
+  appId: "1:XXXXXXXXXXXXX:web:XXXXXXXXXXXXXX",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+```
+
+Этот файл `firebase.js` надо импортировать в компонент `<App>`, чтобы у SDK был доступ ко всем ключам.:
+
+```jsx
+import React from 'react';
+//...
+import './firebase';
+
+function App() {
+  //...
+}
+
+export dedault app;
+```
+
+Далее в консоли firebase переходим во раздел **Authentication** -> Get started.
+Попадаем в раздел Authentication -> Sign-in methods. И добавляем способ аутентификации по email/password.
+
+Далее можно посмотреть документацию firebase раздел про Authentication.
+
+#### Регистрация
+
+```jsx
+import { getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+//...
+
+const auth = getAuth();
+
+createUserWithEmailAndPassword(auth, email, password)
+  .then(() => {})
+  .catch(() => {});
+```
+
+#### Логин
+
+```jsx
+import { getAuth } from 'firebase/auth`;
+import { signInWithEmailAndPassword} from 'firebase/auth';
+//...
+
+const auth = getAuth();
+signInWithEmailAndPassword(auth, email, password)
+  .then(() => {})
+  .catch(() => {});
+```
+
+### 17 React Typescript
+
+ReactElement - с типом и пропсами
+JSX.Element - то же что и react element он его экстендит, но принимает any
+ReactNode - более обширный тип. может быть многими другими типами
+
+До реакт 18
+
+```tsx
+React.FunctionComponent<{ title: string }> = () => {};
+
+//...
+Section.defaultProps = {
+  title: "My section",
+};
+```
 
 ### snippet
 
@@ -2194,3 +2379,141 @@ firebase.google.com/docs/build?hl=ru
 ## Идеи для проектов по реакту
 
 https://medium.com/nuances-of-programming/5-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%BE%D0%B2-%D0%BD%D0%B0-react-%D0%B4%D0%BB%D1%8F-%D0%BD%D0%B0%D1%87%D0%B8%D0%BD%D0%B0%D1%8E%D1%89%D0%B8%D1%85-7c25e02ea714
+
+### 18 React animation
+
+Библиотека framer-motion
+https://www.framer.com/motion/
+
+```shell
+npm install framer-motion
+```
+
+## 19
+
+Прямая поддержка тестов у `npx create-react-app react-test`;
+У вити поддержки тестов из коробки нет. Надо менять конфиги.
+
+Пирамида тестирования. Тетсирование от низкоуровненого у более высокоуровневому.
+В реакт тестировании самый нижний уровень - тестирование компонента.
+
+App.test.js - файл который помогает тестировать приложение
+package.json - в разделе scripts
+
+`npm run test`` будет по капотом запускать _react testing library_ testing-library.com. Или Jest jestjs.io - больше для js , для всех фреймворках, а не толко для реакта. Иногда они работают вместе.
+
+два валидных схемы - `Button.jsx` -> `Button.spec.jsx` или `Button.test.jsx`
+Можно тесты хранить или в катклоге с компоенентом или в папке `./src/test`
+
+```jsx
+import { render, screen } from "@testing-library/react";
+// ипорт компонента
+
+test("should have Learn React Link", () => {
+  render(<App />);
+  const learnReactLink = screen.getByText(/learn react/i);
+  expect(learnReactLink).toBeInTheDocument();
+});
+```
+
+render - для рендере компонента
+screen - чтобы тест мог "просмотреть"
+
+test должен принимать 2 параметра
+
+1. should ... - название теста
+2. коллбек
+
+- рендер
+- что ожидаю expect();
+
+ToBeInTheDocument - встроенный метод документа.
+
+```jsx
+test("sum of array", () => {
+  const result = sumOfArray([1, 2, 3, 4, 5]);
+  expect(result).toEqual(15);
+});
+```
+
+Список этий методов (assertion) можно найти в интернете.
+
+sonarqube.
+
+### 3A для тестов
+
+**Arrange** - подготовка данных для теста, окуженеи и т.п.
+**Act** - сделать дейтсвие, выполнить логику
+**Assert** - сравнить ожидамое значнеие с полученным в результате тестирования
+
+describe - группировка тестов
+
+```jsx
+descript;
+```
+
+`Async.jsx`
+
+```jsx
+import { useEffect, useState } from "react";
+
+const Async = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data);
+      });
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Async;
+```
+
+Roles https://www.w3.org/TR/html-aria/#docconformance
+
+Чтобы в тестах каждый ра не отправлять запросы делают моковые данные.
+
+Jest для моковых данных.
+
+```shell
+npm install --save-dev- jest
+```
+
+## Собес
+
+html - react
+live coding
+сделать и редьюса
+
+добавить метод обхекту через прототип и переписать на классы
+--scss
+--mixin
+
+в обхектах функции и что вызовет стрелочная функция и что вызовет declaration.
+
+асинхронщина. написано полотно из 10 консоль логов. синжронно и асинжронно. в промисах, таймауте и интервале. С 0 и реджектом. EventLoop
+
+классы. наследование.
+2 класса, отнаследованне. свои методы.
+Прикол в том, что мы перезаписываем поля.
+Класс 2 эекстендит метод супер. перебивает свои поля и снова вызывает метод супер.
+Прототип - что такое. как менять метод прототипа. ЧТо такое прото (ссылка на объект родителя). Прототип - тип, в который мы вписываем. Прототайп - расширяем этот объект.
+
+React
+
+- что такое, почему надо использовать
+  - если пишем на жс встает вопрос перерендеринша части сраниц - живой дом и т.п.
+- мемоизации, ленизвая загрузка (мы получаем картинки с сервера, но грузим три). Разбиение на чанки (получаем списки статистики). Приходит миллиардный список и мы дели его на чанки. Проект тормозит - что копать? useCallback useMemo.
